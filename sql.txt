@@ -1,0 +1,18 @@
+create table user_role(role_id serial primary key,role_name varchar(10));
+
+create table user_details(user_id serial primary key,email varchar(40) unique not null,password varchar(20) not null,name varchar(30),role_id int not null,created_date timestamp,avatar bytea,foreign key(role_id) references user_role(role_id));
+
+create table category(category_id serial primary key,user_id int,category_name varchar(30),description varchar(50),foreign key(user_id) references user_details(user_id) on delete cascade);
+
+create table post(post_id serial primary key,user_id int,category_id int,title varchar(80),content text,sharelink uuid,view_count bigint,like_count bigint,comment_count int,created_date timestamp,thumbnail bytea,foreign key(user_id) references user_details(user_id) on delete cascade,foreign key(category_id) references category(category_id));
+
+create table comment(comment_id serial primary key,user_id int,post_id int,reply_to int,comment_text varchar(50),date_created timestamp,foreign key(user_id) references user_details(user_id) on delete cascade,foreign key(post_id) references post(post_id) on delete cascade,foreign key(reply_to) references comment(comment_id) on delete cascade);
+
+create table post_like(post_id int,user_id int,primary key(post_id,user_id),foreign key(post_id) references post(post_id) on delete cascade,foreign key(user_id) references user_details(user_id) on delete cascade);
+
+insert into user_role (role_name) values('ADMIN');
+
+insert into user_role (role_name) values('VIEWER');
+
+insert into user_role (role_name) values('BLOGGER');
+
